@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BugLog — Defects</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <h1>BugLog</h1>
+    <p class="version">v0.1.0-alpha</p>
+    <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
+  </header>
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="test-cases.html">Test Cases</a>
+    <a href="defects.html" class="active">Defects</a>
+    <a href="metrics.html">Metrics</a>
+    <a href="settings.html">Settings</a>
+  </nav>
+
+  <main>
+    <section id="build-select-panel">
+      <div id="project-select">
+        <div class="select-panel">
+          <span class="panel-label">Project</span>
+          <select id="project">
+            <option value="">Select...</option>
+          </select>
+        </div>
+        <div class="select-panel">
+          <span class="panel-label">Build</span>
+          <select id="build">
+            <option value="">Select...</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section id="add-defect">
+      <h2>Report Defect</h2>
+      <form id="defect-form">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="defect-id">Defect ID</label>
+            <input id="defect-id" type="text" placeholder="e.g. D_001">
+          </div>
+          <div class="form-field">
+            <label for="status">Status</label>
+            <select id="status">
+              <option value="Open" selected>Open</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="severity">Severity</label>
+            <select id="severity">
+              <option value="Blocker">Blocker</option>
+              <option value="Critical">Critical</option>
+              <option value="Major" selected>Major</option>
+              <option value="Minor">Minor</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="priority">Priority</label>
+            <select id="priority">
+              <option value="P0">P0 — High</option>
+              <option value="P1" selected>P1 — Medium</option>
+              <option value="P2">P2 — Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="description">Defect Description</label>
+          <textarea id="description" rows="2" placeholder="What is the bug?"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="expected">Expected Result</label>
+            <textarea id="expected" rows="2" placeholder="What should happen"></textarea>
+          </div>
+          <div class="form-field">
+            <label for="actual">Actual Result</label>
+            <textarea id="actual" rows="2" placeholder="What actually happened"></textarea>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="steps">Steps to Reproduce</label>
+          <textarea id="steps" rows="4" placeholder="1. Go to&#10;2. Click&#10;3. Observe"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="reference">Reference</label>
+            <input id="reference" type="text" placeholder="e.g. TC_LOG_001">
+          </div>
+          <div class="form-field">
+            <label for="screenshot">Screenshot (URL or filename)</label>
+            <input id="screenshot" type="text" placeholder="Optional">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Report Defect</button>
+      </form>
+    </section>
+
+    <section id="defect-list">
+      <h2>Defects</h2>
+      <div class="table-panel">
+        <table>
+          <thead>
+            <tr>
+              <th>Defect ID</th>
+              <th>Description</th>
+              <th>Severity</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="defects-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/defects.js"></script>
+</body>
+</html>

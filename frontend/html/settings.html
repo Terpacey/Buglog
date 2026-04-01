@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BugLog — Settings</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <h1>BugLog</h1>
+    <p class="version">v0.1.0-alpha</p>
+    <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
+  </header>
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="test-cases.html">Test Cases</a>
+    <a href="defects.html">Defects</a>
+    <a href="metrics.html">Metrics</a>
+    <a href="settings.html" class="active">Settings</a>
+  </nav>
+
+  <main>
+    <section id="settings-panel">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <p class="settings-note">Settings are saved to your browser and apply to your workspace only. Defaults follow standard QA reporting practice.</p>
+      </div>
+
+      <div class="settings-group">
+        <h3>Test Case Status Values</h3>
+        <p class="settings-desc">One per line. The first value is used as the default for new test cases.</p>
+        <textarea id="setting-tc-status" rows="4">Not Run
+Passed
+Failed
+Blocked</textarea>
+      </div>
+
+      <div class="settings-group">
+        <h3>Priority Values</h3>
+        <p class="settings-desc">One per line, format: VALUE — Description</p>
+        <textarea id="setting-priority" rows="3">P0 — High, resolve immediately
+P1 — Medium, resolve ASAP for next build
+P2 — Low, resolve in any future version</textarea>
+      </div>
+
+      <div class="settings-group">
+        <h3>Severity Values (Defects)</h3>
+        <p class="settings-desc">One per line, format: VALUE — Description</p>
+        <textarea id="setting-severity" rows="4">Blocker — Cannot proceed further in test cycle
+Critical — Main function not working, breaks user flow
+Major — Causes undesirable behaviour but still functional
+Minor — Will not cause breakdown of flow</textarea>
+      </div>
+
+      <div class="settings-group">
+        <h3>Defect Status Values</h3>
+        <p class="settings-desc">One per line.</p>
+        <textarea id="setting-defect-status" rows="4">Open
+In Progress
+Resolved
+Closed</textarea>
+      </div>
+
+      <div class="settings-actions">
+        <button id="save-settings" class="btn-primary">Save Settings</button>
+        <button id="reset-settings" class="btn-secondary">Reset to Defaults</button>
+      </div>
+      <p id="settings-saved" style="display:none;" class="settings-saved-msg">Settings saved.</p>
+    </section>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/settings.js"></script>
+</body>
+</html>

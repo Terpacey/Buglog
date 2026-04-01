@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BugLog — Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <h1>BugLog</h1>
+    <p class="version">v0.1.0-alpha</p>
+    <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
+  </header>
+  <nav>
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="test-cases.html">Test Cases</a>
+    <a href="defects.html">Defects</a>
+    <a href="metrics.html">Metrics</a>
+    <a href="settings.html">Settings</a>
+  </nav>
+
+  <main>
+    <section id="dashboard-controls">
+      <div id="project-select">
+        <div class="select-panel">
+          <span class="panel-label">Project</span>
+          <select id="project">
+            <option value="">Select...</option>
+            <option value="__add__">+ Add Project</option>
+          </select>
+          <input id="new-project" type="text" placeholder="Project name" style="display:none;">
+        </div>
+        <div class="select-panel">
+          <span class="panel-label">Build</span>
+          <select id="build">
+            <option value="">Select...</option>
+            <option value="__add__">+ Add Build</option>
+          </select>
+          <input id="new-build" type="text" placeholder="e.g. v1.0.0" style="display:none;">
+        </div>
+      </div>
+
+      <section id="summary">
+        <h2>Test Metrics</h2>
+        <div id="stat-cards">
+          <div class="stat-card pass">
+            <span class="stat-label">Passed</span>
+            <span class="stat-value" id="count-passed">—</span>
+          </div>
+          <div class="stat-card fail">
+            <span class="stat-label">Failed</span>
+            <span class="stat-value" id="count-failed">—</span>
+          </div>
+          <div class="stat-card blocked">
+            <span class="stat-label">Blocked</span>
+            <span class="stat-value" id="count-blocked">—</span>
+          </div>
+          <div class="stat-card not-run">
+            <span class="stat-label">Not Run</span>
+            <span class="stat-value" id="count-not-run">—</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="recent-defects">
+        <h2>Recent Defects</h2>
+        <div id="recent-defects-panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Defect ID</th>
+                <th>Description</th>
+                <th>Severity</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="defects-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section id="instructions">
+      <h2>How to use BugLog</h2>
+      <div id="instructions-content">
+        <ol>
+          <li>Select or create a <strong>Project</strong> and <strong>Build</strong> above.</li>
+          <li>Go to <strong>Test Cases</strong> to log and run your test cases.</li>
+          <li>Go to <strong>Defects</strong> to report bugs found during testing.</li>
+          <li>Go to <strong>Metrics</strong> to view execution rates and defect trends.</li>
+          <li>Go to <strong>Settings</strong> to customise status, priority, and severity values.</li>
+          <li>Return here any time for a quick results summary.</li>
+        </ol>
+      </div>
+      <button id="toggle-instructions">Hide</button>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("project").addEventListener("change", function() {
+      document.getElementById("new-project").style.display =
+        this.value === "__add__" ? "block" : "none";
+    });
+
+    document.getElementById("build").addEventListener("change", function() {
+      document.getElementById("new-build").style.display =
+        this.value === "__add__" ? "block" : "none";
+    });
+
+    document.getElementById("toggle-instructions").addEventListener("click", function() {
+      const content = document.getElementById("instructions-content");
+      const visible = content.style.display !== "none";
+      content.style.display = visible ? "none" : "block";
+      this.textContent = visible ? "Show" : "Hide";
+    });
+  </script>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>

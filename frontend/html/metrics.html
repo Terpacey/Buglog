@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BugLog — Metrics</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <h1>BugLog</h1>
+    <p class="version">v0.1.0-alpha</p>
+    <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
+  </header>
+  <nav>
+    <a href="index.html">Dashboard</a>
+    <a href="test-cases.html">Test Cases</a>
+    <a href="defects.html">Defects</a>
+    <a href="metrics.html" class="active">Metrics</a>
+    <a href="settings.html">Settings</a>
+  </nav>
+
+  <main>
+    <section id="build-select-panel">
+      <div id="project-select">
+        <div class="select-panel">
+          <span class="panel-label">Project</span>
+          <select id="project">
+            <option value="">Select...</option>
+          </select>
+        </div>
+        <div class="select-panel">
+          <span class="panel-label">Build</span>
+          <select id="build">
+            <option value="">Select...</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section id="execution-metrics">
+      <h2>Test Execution</h2>
+      <div id="execution-cards">
+        <div class="stat-card pass">
+          <span class="stat-label">Executed</span>
+          <span class="stat-value" id="pct-executed">—</span>
+        </div>
+        <div class="stat-card pass">
+          <span class="stat-label">Pass Rate</span>
+          <span class="stat-value" id="pct-pass">—</span>
+        </div>
+        <div class="stat-card fail">
+          <span class="stat-label">Fail Rate</span>
+          <span class="stat-value" id="pct-fail">—</span>
+        </div>
+        <div class="stat-card blocked">
+          <span class="stat-label">Blocked Rate</span>
+          <span class="stat-value" id="pct-blocked">—</span>
+        </div>
+      </div>
+      <div class="chart-panel">
+        <canvas id="execution-chart"></canvas>
+      </div>
+    </section>
+
+    <section id="defect-metrics">
+      <h2>Defect Analysis</h2>
+      <div id="defect-cards">
+        <div class="stat-card not-run">
+          <span class="stat-label">Total Defects</span>
+          <span class="stat-value" id="total-defects">—</span>
+        </div>
+        <div class="stat-card fail">
+          <span class="stat-label">Open Defects</span>
+          <span class="stat-value" id="open-defects">—</span>
+        </div>
+        <div class="stat-card blocked">
+          <span class="stat-label">Avg Defect Age</span>
+          <span class="stat-value" id="avg-defect-age">—</span>
+        </div>
+        <div class="stat-card fail">
+          <span class="stat-label">Oldest Open</span>
+          <span class="stat-value" id="oldest-defect">—</span>
+        </div>
+      </div>
+      <div class="chart-panel">
+        <canvas id="defect-chart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/metrics.js"></script>
+</body>
+</html>
