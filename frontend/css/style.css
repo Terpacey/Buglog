@@ -1,3 +1,4 @@
+/* --- Variables --- */
 :root {
     --bg-primary: #0d1b2a;
     --bg-secondary: #1b2a3b;
@@ -10,12 +11,16 @@
     --border: #2a3f55;
 }
 
+/* --- Reset --- */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* --- Base --- */
+
+/* Forces scrollbar to prevent layout shift when content height changes */
 html {
     overflow-y: scroll;
 }
@@ -28,6 +33,7 @@ body {
     line-height: 1.5;
 }
 
+/* --- Header --- */
 header {
     text-align: center;
     padding: 24px;
@@ -57,6 +63,7 @@ header .byline a:hover {
     color: var(--accent-green);
 }
 
+/* --- Nav --- */
 nav {
     display: flex;
     justify-content: center;
@@ -75,7 +82,7 @@ nav a {
     border-bottom: none;
     border-radius: 4px 4px 0 0;
     position: relative;
-    bottom: -2px;
+    bottom: -2px; /* Overlaps the nav bottom border — creates the connected tab effect */
 }
 
 nav a.active {
@@ -90,6 +97,7 @@ nav a:hover:not(.active) {
     color: var(--text-primary);
 }
 
+/* --- Inputs --- */
 input, select, textarea {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
@@ -98,6 +106,7 @@ input, select, textarea {
     padding: 8px;
 }
 
+/* --- Main --- */
 main {
     padding: 24px;
     display: flex;
@@ -105,6 +114,7 @@ main {
     gap: 24px;
 }
 
+/* --- Dashboard --- */
 #dashboard-controls {
     background-color: var(--bg-card);
     border: 1px solid var(--border);
@@ -166,6 +176,7 @@ select, input {
     gap: 12px;
 }
 
+/* --- Stat cards --- */
 .stat-card {
     flex: 1;
     background-color: var(--bg-secondary);
@@ -218,6 +229,7 @@ select, input {
     overflow: hidden;
 }
 
+/* --- Tables --- */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -237,6 +249,7 @@ th {
     color: var(--text-muted);
 }
 
+/* --- Build select panel --- */
 #build-select-panel {
     background-color: var(--bg-card);
     border: 1px solid var(--border);
@@ -246,6 +259,7 @@ th {
     justify-content: center;
 }
 
+/* --- Metrics --- */
 #execution-metrics,
 #defect-metrics {
     background-color: var(--bg-card);
@@ -282,6 +296,7 @@ th {
     justify-content: center;
 }
 
+/* --- Instructions --- */
 #instructions {
     background-color: var(--bg-instructions);
     border: 1px solid var(--border);
@@ -321,6 +336,7 @@ th {
     border-color: var(--text-muted);
 }
 
+/* --- Forms --- */
 #add-test-case,
 #add-defect {
     background-color: var(--bg-card);
@@ -376,6 +392,7 @@ textarea {
     resize: vertical;
 }
 
+/* --- Buttons --- */
 .btn-primary {
     align-self: flex-start;
     background-color: var(--accent-green);
@@ -406,6 +423,7 @@ textarea {
     overflow: hidden;
 }
 
+/* --- Settings --- */
 #settings-panel {
     background-color: var(--bg-card);
     border: 1px solid var(--border);

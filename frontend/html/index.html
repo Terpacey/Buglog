@@ -26,16 +26,18 @@
           <span class="panel-label">Project</span>
           <select id="project">
             <option value="">Select...</option>
-            <option value="__add__">+ Add Project</option>
+            <option value="__add__">+ Add Project</option> <!-- __add__ sentinel triggers input below -->
           </select>
+          <!-- Hidden — shown when + Add Project is selected -->
           <input id="new-project" type="text" placeholder="Project name" style="display:none;">
         </div>
         <div class="select-panel">
           <span class="panel-label">Build</span>
           <select id="build">
             <option value="">Select...</option>
-            <option value="__add__">+ Add Build</option>
+            <option value="__add__">+ Add Build</option> <!-- __add__ sentinel triggers input below -->
           </select>
+          <!-- Hidden — shown when + Add Build is selected -->
           <input id="new-build" type="text" placeholder="e.g. v1.0.0" style="display:none;">
         </div>
       </div>
