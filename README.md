@@ -4,4 +4,4 @@
 
 ## Live Demo
 
-[Netlify link placeholder]
+https://buglogqa.netlify.app/
