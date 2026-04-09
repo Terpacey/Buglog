@@ -3,6 +3,19 @@ window.BuglogAPI.ready.then(() => {
   const buildSel = document.getElementById('build');
   const form = document.getElementById('test-case-form');
 
+  function populateSelect(id, lines) {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '';
+    for (const line of lines) {
+      const value = line.includes(' — ') ? line.split(' — ')[0] : line;
+      sel.add(new Option(line, value));
+    }
+  }
+
+  const settings = BuglogAPI.getSettings();
+  populateSelect('status',   settings.tc_status.split('\n').filter(l => l.trim()));
+  populateSelect('priority', settings.priority.split('\n').filter(l => l.trim()));
+
   // Populate project dropdown on load.
   function loadProjects() {
     for (const p of BuglogAPI.getProjects()) {

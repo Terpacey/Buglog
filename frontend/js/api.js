@@ -138,20 +138,23 @@ window.BuglogAPI.ready = initSqlJs({
 
   // Stats — return fixed-shape objects used by dashboard and metrics page.
   BuglogAPI.getTestCaseStats = buildId => {
+    // Status order from settings: [0]=not_run default, [1]=passed, [2]=failed, [3]=blocked
+    const statuses = BuglogAPI.getSettings().tc_status.split('\n').filter(s => s.trim());
     const rows = query("SELECT status, COUNT(*) as count FROM test_cases WHERE build_id = ? GROUP BY status", [buildId]);
-    const stats = { passed: 0, failed: 0, blocked: 0, not_run: 0 };
-    for (const row of rows) {
-      if (row.status === 'Passed')       stats.passed  = row.count;
-      else if (row.status === 'Failed')  stats.failed  = row.count;
-      else if (row.status === 'Blocked') stats.blocked = row.count;
-      else if (row.status === 'Not Run') stats.not_run = row.count;
-    }
-    return stats;
+    const countMap = {};
+    for (const row of rows) countMap[row.status] = row.count;
+    return {
+      not_run: countMap[statuses[0]] || 0,
+      passed:  countMap[statuses[1]] || 0,
+      failed:  countMap[statuses[2]] || 0,
+      blocked: countMap[statuses[3]] || 0
+    };
   };
 
   BuglogAPI.getDefectStats = buildId => {
+    const firstStatus = BuglogAPI.getSettings().defect_status.split('\n').filter(s => s.trim())[0];
     const total = query("SELECT COUNT(*) as count FROM defects WHERE build_id = ?", [buildId])[0]?.count || 0;
-    const open  = query("SELECT COUNT(*) as count FROM defects WHERE build_id = ? AND status = 'Open'", [buildId])[0]?.count || 0;
+    const open  = query("SELECT COUNT(*) as count FROM defects WHERE build_id = ? AND status = ?", [buildId, firstStatus])[0]?.count || 0;
     const by_severity = {};
     for (const row of query("SELECT severity, COUNT(*) as count FROM defects WHERE build_id = ? GROUP BY severity", [buildId]))
       by_severity[row.severity] = row.count;
@@ -182,6 +185,14 @@ window.BuglogAPI.ready = initSqlJs({
   BuglogAPI.resetSettingsToDefaults = () => {
     for (const key of Object.keys(SETTING_DEFAULTS))
       localStorage.removeItem(`buglog_${key}`);
+  };
+
+  BuglogAPI.resetAppState = () => {
+    db.run("DELETE FROM defects");
+    db.run("DELETE FROM test_cases");
+    db.run("DELETE FROM builds");
+    db.run("DELETE FROM projects");
+    saveDB();
   };
 
   // _db and _save are internal — page scripts use the public API methods only.

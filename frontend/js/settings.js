@@ -29,5 +29,10 @@ window.BuglogAPI.ready.then(() => {
     loadSettings();
   });
 
+  document.getElementById('reset-app').addEventListener('click', () => {
+    if (!confirm("Are you sure? This will permanently delete all projects, builds, test cases, and defects.")) return;
+    BuglogAPI.resetAppState();
+  });
+
   loadSettings();
 });

@@ -41,7 +41,8 @@ window.BuglogAPI.ready.then(() => {
     document.getElementById('open-defects').textContent = defectStats.open || '—';
 
     // Age stats are scoped to open defects only.
-    const openDefects = BuglogAPI.getDefects(buildId).filter(d => d.status === 'Open' && d.date_raised);
+    const firstDefectStatus = settings.defect_status.split('\n').filter(s => s.trim())[0];
+    const openDefects = BuglogAPI.getDefects(buildId).filter(d => d.status === firstDefectStatus && d.date_raised);
     if (openDefects.length) {
       const ages = openDefects.map(d => daysSince(d.date_raised));
       document.getElementById('avg-defect-age').textContent = Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) + 'd';
@@ -51,19 +52,23 @@ window.BuglogAPI.ready.then(() => {
       document.getElementById('oldest-defect').textContent = '—';
     }
 
+    const settings = BuglogAPI.getSettings();
+    const tcStatuses = settings.tc_status.split('\n').filter(s => s.trim());
+    const severityOrder = settings.severity.split('\n').filter(s => s.trim()).map(s => s.includes(' — ') ? s.split(' — ')[0] : s);
+
     // Destroy before redraw — Chart.js throws if canvas is already in use.
     if (executionChart) executionChart.destroy();
     if (defectChart) defectChart.destroy();
 
+    // Labels match settings order: [0]=not_run, [1]=passed, [2]=failed, [3]=blocked
     executionChart = new Chart(document.getElementById('execution-chart'), {
       type: 'doughnut',
       data: {
-        labels: ['Passed', 'Failed', 'Blocked', 'Not Run'],
+        labels: [tcStatuses[1], tcStatuses[2], tcStatuses[3], tcStatuses[0]],
         datasets: [{ data: [tcStats.passed, tcStats.failed, tcStats.blocked, tcStats.not_run], backgroundColor: ['#4caf50', '#f44336', '#ff9800', '#607d8b'] }]
       }
     });
 
-    const severityOrder = ['Blocker', 'Critical', 'Major', 'Minor'];
     defectChart = new Chart(document.getElementById('defect-chart'), {
       type: 'doughnut',
       data: {
