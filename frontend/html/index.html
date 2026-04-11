@@ -7,8 +7,8 @@
 </head>
 <body>
   <header>
-    <h1>BugLog</h1>
-    <p class="version">v0.1.0-alpha</p>
+    <h1><a href="https://github.com/Terpacey/Buglog" target="_blank">BugLog</a></h1>
+    <p class="version">v0.6.0-alpha</p>
     <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
   </header>
   <nav>
@@ -27,20 +27,25 @@
           <select id="project">
             <option value="">Select...</option>
           </select>
-          <!-- Hidden — shown when + Add Project is selected -->
-          <input id="new-project" type="text" placeholder="Project name" style="display:none;">
-          <button id="save-project" class="btn-save" disabled style="display:none;">Save</button>
         </div>
         <div class="select-panel">
           <span class="panel-label">Build</span>
           <select id="build">
             <option value="">Select...</option>
           </select>
-          <!-- Hidden — shown when + Add Build is selected -->
-          <input id="new-build" type="text" placeholder="e.g. v1.0.0" style="display:none;">
-          <button id="save-build" class="btn-save" disabled style="display:none;">Save</button>
         </div>
       </div>
+      <!-- Hidden — shown below selectors when + Add Project/Build is selected -->
+      <div id="add-row" style="display:none;">
+        <input id="new-project" type="text" placeholder="Project name" style="display:none;">
+        <button id="save-project" class="btn-save" disabled style="display:none;">Save</button>
+        <span id="project-save-msg" class="success-msg" style="display:none;">Project saved.</span>
+        <input id="new-build" type="text" placeholder="e.g. v1.0.0" style="display:none;">
+        <button id="save-build" class="btn-save" disabled style="display:none;">Save</button>
+        <span id="build-save-msg" class="success-msg" style="display:none;">Build saved.</span>
+      </div>
+      <button id="export-md" class="btn-secondary" style="display:none;">Export current build data as Markdown</button>
+      <span id="selection-msg" class="success-msg" style="display:none;"></span>
 
       <section id="summary">
         <h2>Test Metrics</h2>

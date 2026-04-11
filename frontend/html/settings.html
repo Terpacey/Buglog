@@ -7,8 +7,8 @@
 </head>
 <body>
   <header>
-    <h1>BugLog</h1>
-    <p class="version">v0.1.0-alpha</p>
+    <h1><a href="https://github.com/Terpacey/Buglog" target="_blank">BugLog</a></h1>
+    <p class="version">v0.6.0-alpha</p>
     <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
   </header>
   <nav>
@@ -64,10 +64,11 @@ Closed</textarea>
       <div class="settings-actions">
         <button id="save-settings" class="btn-primary">Save Settings</button>
         <button id="reset-settings" class="btn-secondary">Reset to Defaults</button>
+        <button id="export-all" class="btn-secondary">Export All Data as Markdown</button>
         <button id="reset-app" class="btn-danger">Reset App State</button>
       </div>
-      <!-- Shown on successful save, hidden by default -->
       <p id="settings-saved" style="display:none;" class="settings-saved-msg">Settings saved.</p>
+      <p id="settings-reset-msg" style="display:none;" class="success-msg">Settings reset to defaults.</p>
     </section>
   </main>
 

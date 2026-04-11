@@ -7,8 +7,8 @@
 </head>
 <body>
   <header>
-    <h1>BugLog</h1>
-    <p class="version">v0.1.0-alpha</p>
+    <h1><a href="https://github.com/Terpacey/Buglog" target="_blank">BugLog</a></h1>
+    <p class="version">v0.6.0-alpha</p>
     <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
   </header>
   <nav>
@@ -35,6 +35,7 @@
           </select>
         </div>
       </div>
+      <span id="selection-msg" class="success-msg" style="display:none;"></span>
     </section>
 
     <section id="add-test-case">
@@ -92,6 +93,7 @@
           <textarea id="notes" rows="2" placeholder="Any additional observations"></textarea>
         </div>
         <button type="submit" class="btn-primary">Add Test Case</button>
+        <span id="tc-saved-msg" class="success-msg" style="display:none;">Test case added.</span>
       </form>
     </section>
 

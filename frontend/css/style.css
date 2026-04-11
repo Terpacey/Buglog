@@ -41,6 +41,15 @@ header {
     border-bottom: 1px solid var(--border);
 }
 
+header h1 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+header h1 a:hover {
+    color: var(--accent-green);
+}
+
 header .version {
     margin-top: 4px;
     font-size: 0.75rem;
@@ -256,7 +265,8 @@ th {
     border-radius: 8px;
     padding: 24px 40px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* --- Metrics --- */
@@ -532,4 +542,59 @@ textarea {
 .settings-saved-msg {
     font-size: 0.85rem;
     color: var(--accent-green);
+}
+
+.success-msg {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--accent-green);
+    text-align: center;
+    margin-top: 8px;
+}
+
+#add-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.expand-row td {
+    background-color: var(--bg-secondary);
+    padding: 16px 20px;
+    border-top: none;
+}
+
+.expand-row .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.detail-field-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.detail-field-value {
+    white-space: pre-wrap;
+}
+
+.expand-row .detail-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.edit-field textarea,
+.edit-field input,
+.edit-field select {
+    width: 100%;
+}
+
+.chart-panel:empty,
+.chart-panel.hidden {
+    display: none;
 }

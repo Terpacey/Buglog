@@ -2,7 +2,7 @@
 
 ## Overview
 
-Buglog is a browser-only QA tracking tool. It stores all data locally in the browser using sql.js (SQLite via WebAssembly) and IndexedDB for persistence. No server, no account, no network dependency after the initial page load.
+Buglog is a browser-only QA tracking tool. It stores all data locally in the browser using sql.js (SQLite via WebAssembly) with OPFS for persistence. No server, no account, no network dependency after the initial page load.
 
 ---
 
@@ -37,7 +37,7 @@ Buglog is a browser-only QA tracking tool. It stores all data locally in the bro
 ## REQ-004 — Defect Management
 
 - A defect can only be reported when a project and build are both selected.
-- The form captures all 10 fields in order: Defect ID, Status, Severity, Priority, Defect Description, Expected Result, Actual Result, Steps to Reproduce, Reference, Screenshot.
+- The form captures all 12 fields in order: Defect ID, Status, Severity, Priority, Defect Description, Expected Result, Actual Result, Steps to Reproduce, Date Raised, Date Closed, Reference, Screenshot.
 - Date Raised is set automatically to today's date at the time of submission.
 - Defect ID format: `D_XXX` (e.g. `D_001`). Field is optional.
 - Status values: Open (default), In Progress, Resolved, Closed.
@@ -100,3 +100,49 @@ Buglog is a browser-only QA tracking tool. It stores all data locally in the bro
 - If sql.js or its WASM binary fails to load, a visible error message is shown on the page. The app does not silently fail.
 - If a form is submitted without a project/build selected, submission is prevented and the user is informed.
 - If a required field (Title for test cases) is empty, submission is prevented by standard HTML5 form validation.
+
+## REQ-010 — Confirmation Messages
+
+- All create and save actions display a styled success message that auto-hides after 2 seconds.
+- Covered actions: adding a project, adding a build, adding a test case, updating a test case, reporting a defect, updating a defect, saving settings, resetting settings to defaults.
+- Changing the project or build selection displays a confirmation message showing the new selection name.
+
+## REQ-011 — Cross-Page Selection Persistence
+
+- The selected project and build persist across page navigation via localStorage.
+- When a project is selected, the latest build for that project is auto-selected.
+- On page load, the previously selected project and build are restored and their data is displayed automatically.
+- Selecting a different project clears the stored build selection.
+
+## REQ-012 — Test Case Detail and Edit
+
+- Clicking a row in the test case table expands an inline detail view showing all 9 fields.
+- Clicking the same row again, or clicking Close, collapses the detail view.
+- Only one detail row is open at a time — opening a new one closes any existing one.
+- An Edit button within the detail view switches to an editable form pre-filled with current values.
+- Saving an edit updates the record in place and returns to the read-only detail view.
+- Cancel reverts to the read-only view without saving.
+
+## REQ-013 — Defect Detail and Edit
+
+- Same expand/collapse and inline edit behaviour as REQ-012, applied to the defects table.
+- The edit form includes Date Raised (editable) and Date Closed (optional).
+- Date Raised defaults to today on the add form.
+- Date Closed is stored when provided and displayed in the detail view and Markdown export.
+
+## REQ-014 — Defect Reference Autocomplete
+
+- The Reference field on the defect form offers autocomplete suggestions drawn from existing test case IDs for the currently selected build.
+- The field still accepts manual free-text entry.
+- Suggestions update when the build selection changes.
+
+## REQ-015 — Build Version in Defect List
+
+- The defects table includes a Build column showing the name of the currently selected build.
+
+## REQ-016 — Markdown Export
+
+- The Dashboard provides an Export as Markdown button, visible only when a build is selected.
+- Clicking it downloads a `.md` file containing the project name, build name, a full test cases table, and a full defects table for that build.
+- The Settings page provides an Export All Data as Markdown button.
+- Clicking it downloads a single `buglog_export.md` file containing all projects and builds, separated by horizontal rules.

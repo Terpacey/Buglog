@@ -65,9 +65,12 @@ window.BuglogAPI.ready = initSqlJs({
       steps_to_reproduce TEXT,
       date_raised        TEXT,
       reference          TEXT,
-      screenshot         TEXT
+      screenshot         TEXT,
+      date_closed        TEXT
     )
   `);
+
+  try { db.run("ALTER TABLE defects ADD COLUMN date_closed TEXT"); } catch(e) { /* column already exists */ }
 
   async function saveDB() {
     try {
@@ -127,8 +130,24 @@ window.BuglogAPI.ready = initSqlJs({
 
   BuglogAPI.addDefect = (buildId, data) => {
     db.run(
-      "INSERT INTO defects (build_id, defect_id, status, severity, priority, description, expected_result, actual_result, steps_to_reproduce, date_raised, reference, screenshot) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-      [buildId, data.defect_id, data.status, data.severity, data.priority, data.description, data.expected_result, data.actual_result, data.steps_to_reproduce, data.date_raised, data.reference, data.screenshot]
+      "INSERT INTO defects (build_id, defect_id, status, severity, priority, description, expected_result, actual_result, steps_to_reproduce, date_raised, reference, screenshot, date_closed) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      [buildId, data.defect_id, data.status, data.severity, data.priority, data.description, data.expected_result, data.actual_result, data.steps_to_reproduce, data.date_raised, data.reference, data.screenshot, data.date_closed || null]
+    );
+    BuglogAPI._save();
+  };
+
+  BuglogAPI.updateTestCase = (id, data) => {
+    db.run(
+      "UPDATE test_cases SET tc_id=?, title=?, preconditions=?, steps=?, expected_result=?, actual_result=?, status=?, priority=?, notes=? WHERE id=?",
+      [data.tc_id, data.title, data.preconditions, data.steps, data.expected_result, data.actual_result, data.status, data.priority, data.notes, id]
+    );
+    BuglogAPI._save();
+  };
+
+  BuglogAPI.updateDefect = (id, data) => {
+    db.run(
+      "UPDATE defects SET defect_id=?, status=?, severity=?, priority=?, description=?, expected_result=?, actual_result=?, steps_to_reproduce=?, date_raised=?, reference=?, screenshot=?, date_closed=? WHERE id=?",
+      [data.defect_id, data.status, data.severity, data.priority, data.description, data.expected_result, data.actual_result, data.steps_to_reproduce, data.date_raised, data.reference, data.screenshot, data.date_closed || null, id]
     );
     BuglogAPI._save();
   };
@@ -137,6 +156,11 @@ window.BuglogAPI.ready = initSqlJs({
     query("SELECT defect_id, description, severity, status FROM defects WHERE build_id = ? ORDER BY id DESC LIMIT ?", [buildId, n]);
 
   // Stats — return fixed-shape objects used by dashboard and metrics page.
+  BuglogAPI.getBuildName = buildId => {
+    const rows = query("SELECT name FROM builds WHERE id = ?", [buildId]);
+    return rows[0]?.name || '';
+  };
+
   BuglogAPI.getTestCaseStats = buildId => {
     // Status order from settings: [0]=not_run default, [1]=passed, [2]=failed, [3]=blocked
     const statuses = BuglogAPI.getSettings().tc_status.split('\n').filter(s => s.trim());
@@ -194,6 +218,56 @@ window.BuglogAPI.ready = initSqlJs({
     db.run("DELETE FROM projects");
     saveDB();
   };
+
+  // Markdown export — returns formatted string; caller handles download.
+  BuglogAPI.exportBuildMarkdown = (projectId, buildId) => {
+    const projects = query("SELECT name FROM projects WHERE id = ?", [projectId]);
+    const projectName = projects[0]?.name || 'Unknown Project';
+    const buildName = BuglogAPI.getBuildName(buildId);
+
+    // Newlines collapse to spaces; pipes are escaped to avoid breaking MD table columns.
+    const cell = v => (v || '').toString().replace(/\n/g, ' ').replace(/\|/g, '\\|');
+
+    const tcs = BuglogAPI.getTestCases(buildId);
+    let tcTable = '## Test Cases\n\n';
+    if (tcs.length) {
+      tcTable += '| TC ID | Title | Preconditions | Steps | Expected Result | Actual Result | Status | Priority | Notes |\n';
+      tcTable += '|---|---|---|---|---|---|---|---|---|\n';
+      for (const tc of tcs)
+        tcTable += `| ${cell(tc.tc_id)} | ${cell(tc.title)} | ${cell(tc.preconditions)} | ${cell(tc.steps)} | ${cell(tc.expected_result)} | ${cell(tc.actual_result)} | ${cell(tc.status)} | ${cell(tc.priority)} | ${cell(tc.notes)} |\n`;
+    } else {
+      tcTable += '_No test cases logged._\n';
+    }
+
+    const defects = BuglogAPI.getDefects(buildId);
+    let defectTable = '## Defects\n\n';
+    if (defects.length) {
+      defectTable += '| Defect ID | Status | Severity | Priority | Description | Expected Result | Actual Result | Steps to Reproduce | Date Raised | Date Closed | Reference |\n';
+      defectTable += '|---|---|---|---|---|---|---|---|---|---|---|\n';
+      for (const d of defects)
+        defectTable += `| ${cell(d.defect_id)} | ${cell(d.status)} | ${cell(d.severity)} | ${cell(d.priority)} | ${cell(d.description)} | ${cell(d.expected_result)} | ${cell(d.actual_result)} | ${cell(d.steps_to_reproduce)} | ${cell(d.date_raised)} | ${cell(d.date_closed)} | ${cell(d.reference)} |\n`;
+    } else {
+      defectTable += '_No defects logged._\n';
+    }
+
+    return `# ${projectName} — ${buildName}\n\n${tcTable}\n${defectTable}`;
+  };
+
+  BuglogAPI.exportAllMarkdown = () => {
+    const projects = BuglogAPI.getProjects();
+    const sections = [];
+    for (const p of projects) {
+      for (const b of BuglogAPI.getBuilds(p.id))
+        sections.push(BuglogAPI.exportBuildMarkdown(p.id, b.id));
+    }
+    return sections.join('\n\n---\n\n');
+  };
+
+  // Cross-page selection — persisted in localStorage so dropdowns survive navigation.
+  BuglogAPI.setSelectedProject = id => localStorage.setItem('buglog_selected_project', id);
+  BuglogAPI.getSelectedProject = ()  => localStorage.getItem('buglog_selected_project');
+  BuglogAPI.setSelectedBuild   = id => localStorage.setItem('buglog_selected_build', id);
+  BuglogAPI.getSelectedBuild   = ()  => localStorage.getItem('buglog_selected_build');
 
   // _db and _save are internal — page scripts use the public API methods only.
   window.BuglogAPI._db = db;
