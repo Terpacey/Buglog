@@ -1,0 +1,17 @@
+{
+  "name": "buglog",
+  "version": "0.7.0-alpha",
+  "description": "Browser-based QA bug and test-case tracker",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "serve": "serve frontend -l 3000"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^25.6.0",
+    "serve": "^14.2.4",
+    "typescript": "^5.0.0"
+  }
+}

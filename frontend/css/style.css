@@ -598,3 +598,37 @@ textarea {
 .chart-panel.hidden {
     display: none;
 }
+
+.hidden {
+    display: none;
+}
+
+/* --- Autocomplete (reference field on defects page) --- */
+.autocomplete-wrapper {
+    position: relative;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-top: none;
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.autocomplete-option {
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.autocomplete-option:hover {
+    background-color: var(--bg-card);
+    color: var(--accent-green);
+}

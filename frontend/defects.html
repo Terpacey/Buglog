@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>BugLog — Defects</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header>
     <h1><a href="https://github.com/Terpacey/Buglog" target="_blank">BugLog</a></h1>
-    <p class="version">v0.6.0-alpha</p>
+    <p class="version">v0.7.0-alpha</p>
     <p class="byline"><a href="https://github.com/Terpacey?tab=repositories" target="_blank">by Hari C.</a></p>
   </header>
   <nav>
@@ -97,8 +97,10 @@
         <div class="form-row">
           <div class="form-field">
             <label for="reference">Reference</label>
-            <input id="reference" type="text" placeholder="e.g. TC_LOG_001" list="tc-id-list">
-            <datalist id="tc-id-list"></datalist>
+            <div class="autocomplete-wrapper">
+              <input id="reference" type="text" placeholder="e.g. TC_LOG_001" autocomplete="off">
+              <div id="tc-id-dropdown" class="autocomplete-dropdown hidden"></div>
+            </div>
           </div>
           <div class="form-field">
             <label for="screenshot">Screenshot (URL or filename)</label>
@@ -141,7 +143,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.js"></script>
-  <script src="../js/api.js"></script>
-  <script src="../js/defects.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/defects.js"></script>
 </body>
 </html>

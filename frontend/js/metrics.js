@@ -90,7 +90,7 @@ window.BuglogAPI.ready.then(() => {
         type: 'doughnut',
         data: {
           labels: severityOrder,
-          datasets: [{ data: severityOrder.map(s => defectStats.by_severity[s] || 0), backgroundColor: ['#b71c1c', '#f44336', '#ff9800', '#ffeb3b'] }]
+          datasets: [{ data: severityOrder.map(s => defectStats.bySeverity[s] || 0), backgroundColor: ['#b71c1c', '#f44336', '#ff9800', '#ffeb3b'] }]
         }
       });
     } else {

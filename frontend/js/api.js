@@ -80,7 +80,7 @@ window.BuglogAPI.ready = initSqlJs({
       await writable.write(db.export());
       await writable.close();
     } catch {
-      // file:// — OPFS unavailable, writes are in-memory only
+      console.log('OPFS unavailable — running on file://, writes are in-memory only');
     }
   }
 
@@ -165,13 +165,13 @@ window.BuglogAPI.ready = initSqlJs({
     // Status order from settings: [0]=not_run default, [1]=passed, [2]=failed, [3]=blocked
     const statuses = BuglogAPI.getSettings().tc_status.split('\n').filter(s => s.trim());
     const rows = query("SELECT status, COUNT(*) as count FROM test_cases WHERE build_id = ? GROUP BY status", [buildId]);
-    const countMap = {};
-    for (const row of rows) countMap[row.status] = row.count;
+    const statusCountMap = {};
+    for (const row of rows) statusCountMap[row.status] = row.count;
     return {
-      not_run: countMap[statuses[0]] || 0,
-      passed:  countMap[statuses[1]] || 0,
-      failed:  countMap[statuses[2]] || 0,
-      blocked: countMap[statuses[3]] || 0
+      not_run: statusCountMap[statuses[0]] || 0,
+      passed:  statusCountMap[statuses[1]] || 0,
+      failed:  statusCountMap[statuses[2]] || 0,
+      blocked: statusCountMap[statuses[3]] || 0
     };
   };
 
@@ -179,13 +179,13 @@ window.BuglogAPI.ready = initSqlJs({
     const firstStatus = BuglogAPI.getSettings().defect_status.split('\n').filter(s => s.trim())[0];
     const total = query("SELECT COUNT(*) as count FROM defects WHERE build_id = ?", [buildId])[0]?.count || 0;
     const open  = query("SELECT COUNT(*) as count FROM defects WHERE build_id = ? AND status = ?", [buildId, firstStatus])[0]?.count || 0;
-    const by_severity = {};
+    const bySeverity = {};
     for (const row of query("SELECT severity, COUNT(*) as count FROM defects WHERE build_id = ? GROUP BY severity", [buildId]))
-      by_severity[row.severity] = row.count;
-    const by_priority = {};
+      bySeverity[row.severity] = row.count;
+    const byPriority = {};
     for (const row of query("SELECT priority, COUNT(*) as count FROM defects WHERE build_id = ? GROUP BY priority", [buildId]))
-      by_priority[row.priority] = row.count;
-    return { total, open, by_severity, by_priority };
+      byPriority[row.priority] = row.count;
+    return { total, open, bySeverity, byPriority };
   };
 
   // Settings — stored in localStorage, not the database. Keyed with buglog_ prefix to avoid collisions.
@@ -233,8 +233,8 @@ window.BuglogAPI.ready = initSqlJs({
     if (tcs.length) {
       tcTable += '| TC ID | Title | Preconditions | Steps | Expected Result | Actual Result | Status | Priority | Notes |\n';
       tcTable += '|---|---|---|---|---|---|---|---|---|\n';
-      for (const tc of tcs)
-        tcTable += `| ${cell(tc.tc_id)} | ${cell(tc.title)} | ${cell(tc.preconditions)} | ${cell(tc.steps)} | ${cell(tc.expected_result)} | ${cell(tc.actual_result)} | ${cell(tc.status)} | ${cell(tc.priority)} | ${cell(tc.notes)} |\n`;
+      for (const testCase of tcs)
+        tcTable += `| ${cell(testCase.tc_id)} | ${cell(testCase.title)} | ${cell(testCase.preconditions)} | ${cell(testCase.steps)} | ${cell(testCase.expected_result)} | ${cell(testCase.actual_result)} | ${cell(testCase.status)} | ${cell(testCase.priority)} | ${cell(testCase.notes)} |\n`;
     } else {
       tcTable += '_No test cases logged._\n';
     }
@@ -244,8 +244,8 @@ window.BuglogAPI.ready = initSqlJs({
     if (defects.length) {
       defectTable += '| Defect ID | Status | Severity | Priority | Description | Expected Result | Actual Result | Steps to Reproduce | Date Raised | Date Closed | Reference |\n';
       defectTable += '|---|---|---|---|---|---|---|---|---|---|---|\n';
-      for (const d of defects)
-        defectTable += `| ${cell(d.defect_id)} | ${cell(d.status)} | ${cell(d.severity)} | ${cell(d.priority)} | ${cell(d.description)} | ${cell(d.expected_result)} | ${cell(d.actual_result)} | ${cell(d.steps_to_reproduce)} | ${cell(d.date_raised)} | ${cell(d.date_closed)} | ${cell(d.reference)} |\n`;
+      for (const defect of defects)
+        defectTable += `| ${cell(defect.defect_id)} | ${cell(defect.status)} | ${cell(defect.severity)} | ${cell(defect.priority)} | ${cell(defect.description)} | ${cell(defect.expected_result)} | ${cell(defect.actual_result)} | ${cell(defect.steps_to_reproduce)} | ${cell(defect.date_raised)} | ${cell(defect.date_closed)} | ${cell(defect.reference)} |\n`;
     } else {
       defectTable += '_No defects logged._\n';
     }
@@ -256,9 +256,9 @@ window.BuglogAPI.ready = initSqlJs({
   BuglogAPI.exportAllMarkdown = () => {
     const projects = BuglogAPI.getProjects();
     const sections = [];
-    for (const p of projects) {
-      for (const b of BuglogAPI.getBuilds(p.id))
-        sections.push(BuglogAPI.exportBuildMarkdown(p.id, b.id));
+    for (const project of projects) {
+      for (const build of BuglogAPI.getBuilds(project.id))
+        sections.push(BuglogAPI.exportBuildMarkdown(project.id, build.id));
     }
     return sections.join('\n\n---\n\n');
   };

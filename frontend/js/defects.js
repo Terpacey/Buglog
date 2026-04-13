@@ -28,6 +28,35 @@ window.BuglogAPI.ready.then(() => {
   // Accepts a Date object — avoids manual string formatting for the input.
   document.getElementById('date-raised').valueAsDate = new Date();
 
+  // Reference field autocomplete — populated by loadDefects when a build is selected.
+  let tcIds = [];
+  const refInput  = document.getElementById('reference');
+  const refDropdown = document.getElementById('tc-id-dropdown');
+
+  // Filters tcIds against the current input and renders matching options.
+  function showDropdown(filter) {
+    const matches = filter
+      ? tcIds.filter(id => id.toLowerCase().includes(filter.toLowerCase()))
+      : tcIds;
+    refDropdown.innerHTML = '';
+    matches.forEach(id => {
+      const opt = document.createElement('div');
+      opt.className = 'autocomplete-option';
+      opt.textContent = id;
+      // mousedown fires before blur, so the value is set before the dropdown hides
+      opt.addEventListener('mousedown', () => { refInput.value = id; });
+      refDropdown.appendChild(opt);
+    });
+    refDropdown.classList.toggle('hidden', matches.length === 0);
+  }
+
+  // Show on focus and click; re-filter on every keystroke.
+  refInput.addEventListener('focus', () => showDropdown(refInput.value));
+  refInput.addEventListener('click', () => showDropdown(refInput.value));
+  refInput.addEventListener('input', () => showDropdown(refInput.value));
+  // Delay gives mousedown on an option time to fire before blur hides the dropdown.
+  refInput.addEventListener('blur',  () => setTimeout(() => refDropdown.classList.add('hidden'), 150));
+
   function loadProjects() {
     for (const p of BuglogAPI.getProjects()) {
       projectSel.add(new Option(p.name, p.id));
@@ -95,7 +124,7 @@ window.BuglogAPI.ready.then(() => {
         <div class="edit-field"><div class="detail-field-label">Steps to Reproduce</div><textarea class="edit-steps" rows="4">${d.steps_to_reproduce || ''}</textarea></div>
         <div class="edit-field"><div class="detail-field-label">Date Raised</div><input class="edit-date-raised" type="date" value="${d.date_raised || ''}"></div>
         <div class="edit-field"><div class="detail-field-label">Date Closed</div><input class="edit-date-closed" type="date" value="${d.date_closed || ''}"></div>
-        <div class="edit-field"><div class="detail-field-label">Reference</div><input class="edit-reference" value="${d.reference || ''}"></div>
+        <div class="edit-field"><div class="detail-field-label">Reference</div><div class="autocomplete-wrapper"><input class="edit-reference" value="${d.reference || ''}" autocomplete="off"><div class="edit-ref-dropdown autocomplete-dropdown hidden"></div></div></div>
         <div class="edit-field"><div class="detail-field-label">Screenshot</div><input class="edit-screenshot" value="${d.screenshot || ''}"></div>
       </div>
       <div class="detail-actions">
@@ -109,16 +138,7 @@ window.BuglogAPI.ready.then(() => {
     const buildName = BuglogAPI.getBuildName(buildId);
     tbody.innerHTML = '';
 
-    const tcs = BuglogAPI.getTestCases(buildId);
-    const datalist = document.getElementById('tc-id-list');
-    datalist.innerHTML = '';
-    for (const tc of tcs) {
-      if (tc.tc_id) {
-        const opt = document.createElement('option');
-        opt.value = tc.tc_id;
-        datalist.appendChild(opt);
-      }
-    }
+    tcIds = BuglogAPI.getTestCases(buildId).map(tc => tc.tc_id).filter(Boolean);
 
     for (const d of BuglogAPI.getDefects(buildId)) {
       const tr = document.createElement('tr');
@@ -149,6 +169,33 @@ window.BuglogAPI.ready.then(() => {
 
         function showEdit() {
           td.innerHTML = editHTML(d);
+
+          const editRefInput    = td.querySelector('.edit-reference');
+          const editRefDropdown = td.querySelector('.edit-ref-dropdown');
+
+          // Filters tcIds against the current input and renders matching options.
+          function showEditDropdown(filter) {
+            const matches = filter
+              ? tcIds.filter(id => id.toLowerCase().includes(filter.toLowerCase()))
+              : tcIds;
+            editRefDropdown.innerHTML = '';
+            matches.forEach(id => {
+              const opt = document.createElement('div');
+              opt.className = 'autocomplete-option';
+              opt.textContent = id;
+              // mousedown fires before blur, so the value is set before the dropdown hides
+              opt.addEventListener('mousedown', () => { editRefInput.value = id; });
+              editRefDropdown.appendChild(opt);
+            });
+            editRefDropdown.classList.toggle('hidden', matches.length === 0);
+          }
+
+          // Show on focus and click; re-filter on every keystroke.
+          editRefInput.addEventListener('focus', () => showEditDropdown(editRefInput.value));
+          editRefInput.addEventListener('click', () => showEditDropdown(editRefInput.value));
+          editRefInput.addEventListener('input', () => showEditDropdown(editRefInput.value));
+          // Delay gives mousedown on an option time to fire before blur hides the dropdown.
+          editRefInput.addEventListener('blur',  () => setTimeout(() => editRefDropdown.classList.add('hidden'), 150));
 
           td.querySelector('.btn-cancel-edit').addEventListener('click', showReadOnly);
 
@@ -202,7 +249,7 @@ window.BuglogAPI.ready.then(() => {
     if (val) {
       BuglogAPI.setSelectedBuild(val);
       loadDefects(val);
-      flashMsg(selectionMsg, `Build changed to ${buildSel.options[buildSel.selectedIndex].text}.`);
+      flashMsg(selectionMsg, 'Build changed.');
     } else {
       document.getElementById('defects-body').innerHTML = '';
     }

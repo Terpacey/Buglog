@@ -1,6 +1,6 @@
 # Buglog
 
-A browser-only QA tracking tool for logging test cases and defects. Demonstrates QA methodology. Playwright tests pending.
+A browser-only QA tracking tool for logging test cases and defects against a structured test cycle.
 
 All data is stored locally in the browser using sql.js (SQLite compiled to WebAssembly) with OPFS for persistence. No server, no account, no sign-up required.
 
@@ -14,7 +14,17 @@ All data is stored locally in the browser using sql.js (SQLite compiled to WebAs
 - Markdown export per build, or all data at once
 - Customisable status, severity, and priority values via Settings
 
-**Tech stack:** HTML/CSS/JS — no framework, no bundler. sql.js + OPFS. Hosted on Netlify.
+**Tech stack:** HTML/CSS/JS — no framework, no bundler. sql.js + OPFS. Playwright E2E tests (TypeScript). Hosted on Netlify.
+
+## Tests
+
+Playwright E2E suite — TypeScript, Page Object Model, custom typed fixture.
+
+```bash
+npm install
+npx playwright install chromium
+npm test
+```
 
 ## Live Demo
 
